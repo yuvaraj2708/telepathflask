@@ -73,26 +73,26 @@
     <main>
         <form method="POST"> 
         <div class="mb-4">
-        <h5 class="page-heading">Add Test</h5>
+        <h5 class="page-heading">Add Router</h5>
         </div>
         <div class="auto-scroll">
             <div class="bg-white rounded-2 p-3 mb-4">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label class="form-label">Test code</label   >
-                            <input type="text" name = "testcode"  value="{{testcode}}" class="form-control" readonly >
+                            <label class="form-label">AE title</label   >
+                            <input type="text" name = "aetitle"   class="form-control"  >
                         </div> 
                         </div>
                    
                     <div class="col-md-4">
-                                <label class="form-label">Test Name</label>
-                                <input type="text" name = "testname"  class="form-control" required>
+                                <label class="form-label">IP address</label>
+                                <input type="text" name = "ipaddress"  class="form-control" required>
                        
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">specimen_type</label>
-                                <input type="text" name = "specimentype"  class="form-control"required >
+                                <label class="form-label">Port number</label>
+                                <input type="text" name = "portnumber"  class="form-control"required >
                        
                             </div>
                         </div>
@@ -112,5 +112,70 @@
     </main>
 </body>
 
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 </html>
 
+<div class="bg-white rounded-2 p-3">
+    <div class="table-responsive">
+      <table class="table table-data">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Aetitle</th>
+            <th>IPaddress</th>
+            <th>Port</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for routers in routers %}
+          <tr>
+            <td class="text-nowrap">{{ routers.current_date }}</td>
+            <td>{{ routers.aetitle }}</td>
+            <td class="text-d-blue fw-semibold">{{ routers.ipaddress }}</td>
+            <td>{{ routers.portnumber }}</td>
+            <td class="text-end">
+              <div class="d-flex gap-2 justify-content-end">
+                
+                  <button type="button" class="table-btn">
+
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <title></title>
+                        <g id="Complete">
+                          <g id="edit">
+                            <g>
+                              <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                              <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon>
+                            </g>
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                  </button>
+                </a>
+                
+                  <button type="button" class="table-btn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                      <g id="SVGRepo_iconCarrier">
+                        <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </g>
+                    </svg>
+                  </button>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}

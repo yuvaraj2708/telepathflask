@@ -92,7 +92,13 @@ class generatereport(db.Model):
     templateid = db.Column(db.String(10))  
     template =    db.Column(db.String(10))
     current_date = datetime.now().date()  
-    
+
+class router(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    aetitle = db.Column(db.String(50))
+    ipaddress = db.Column(db.String(10))
+    portnumber = db.Column(db.String(10))  
+
 @app.route('/register', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -215,8 +221,24 @@ def testmaster():
     test = Testmaster.query.all()
     return render_template('tests-master.html', test=test)
     
-  
     
+#addrouter
+@app.route('/addrouter', methods=['GET', 'POST'])
+def addrouter():
+    if request.method == 'POST':
+        aetitle = request.form.get('aetitle')
+        ipaddress = request.form.get('ipaddress')
+        portnumber = request.form.get('portnumber')
+        routers = router(
+           aetitle=aetitle,
+           ipaddress=ipaddress,
+           portnumber = portnumber,
+        )
+        db.session.add(routers)
+        db.session.commit()
+    routers = router.query.all()   
+    return render_template('router.html',routers=routers)   
+        
 #addtest
 @app.route('/addtest', methods=['GET', 'POST'])
 def addtest():
