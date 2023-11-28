@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Telepathology</title>
+  <!-- Core theme CSS-->
+  
+  <link  rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.css') }}">
+  <link  rel="stylesheet" href="{{url_for('static', filename='css/custom.css') }}">
+  <link  rel="stylesheet" href="{{url_for('static', filename='css/web-icons.css') }}">
+  <script src="static/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container-fluid px-lg-4">
+        <div class="">
+            <nav class="navbar navbar-expand-lg bg-body-tertiary py-0 main-menu-nav">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="pe-lg-5">
+                        <img src="static/images/app-logo.svg" class="app-logo">
+                    </div>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                     
+                      <li class="nav-item">
+                        <a class="nav-link" href="/register">Register Patient</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/">Registration Summary</a>
+                      </li>
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Master
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="/testmaster">Test Master</a></li>
+                              <li><a class="dropdown-item" href="/pathologistmaster">Pathologist Master</a></li>
+                              <li><a class="dropdown-item" href="/refdrmaster">Ref Dr Master</a></li>
+                              <li><a class="dropdown-item" href="/reportformat">Report Format</a></li>
+                        </ul>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div >
+                    <ul class="nav menu-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-person-fill"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+              </nav>
+        </div>
+    </div>
+</header>
+  <main>
+    <form method="POST" action="{{ url_for('summary') }}">
+    <div class="mb-4 d-md-flex gap-3 align-items-center pe-3">
+        <h5 class="page-heading">Registration Summary</h5>
+        <div class="ms-auto">
+          <div class="d-flex gap-3">
+            <button type="button" class="theme-btn-outline">
+              <svg>
+                  <use xlink:href="static/images/iocn.svg#add"></use>
+              </svg>
+              <span><a class="nav-link" href="/register">Add New Patient</a></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    <div class="auto-scroll">
+          <div class="bg-white rounded-2 p-3 mb-4">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="form-label">For The Date</label>
+                  <input type="date"  name="start_date" class="form-control" >
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">To The Date</label>
+                  <input type="date"  name="end_date" class="form-control">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Patient Name</label>
+                  <input type="text" name="patient_name" class="form-control">
+                </div>
+                <div class="col-md-3">
+                  <button type="search" class="theme-btn btn-h">
+                      <svg>
+                          <use xlink:href="static/images/iocn.svg#search"></use>
+                      </svg>
+                      <span>Search</span>
+                  </button>
+                </div>
+              </div>
+          </div>
+          <div class="bg-white rounded-2 p-3">
+              <div class="table-responsive">
+                  <table class="table table-data ">
+                      <thead>
+                        <tr>
+                          <th>Date / UHID</th>
+                          <th>Patient Details</th>
+                          <th>Email ID</th>
+                          <th>Contact Number</th>
+                          
+                          <th>Test</th>
+                          <th>RefDr</th>
+                          <th class="text-end">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for patient in patient %}
+                        
+                        <tr>
+                          <td class="text-nowrap">
+                            <span>{{patient.current_date}}
+                            </span><br><span>{{patient.uhid}}</span>
+                          </td>
+                          <td>
+                            <div>
+                              <div class="text-d-blue fw-semibold">{{patient.patient_name}}</div>
+                              <div>
+                                <span>{{patient.age}}</span>
+                                <svg class="gender-male">
+                                  <use xlink:href="static/images/iocn.svg#gender-male"></use>
+                              </svg>
+                              </div>
+                          </div>
+                          </td>
+                          <td>{{patient.email_id}}</td>
+                          <td>{{patient.contact_number}}</td>
+                          <td></td>
+                          <td></td>
+                         
+                          <td class="text-end">
+                            <div class="d-flex gap-3 justify-content-end">
+                              <button type="button" class="table-btn" onclick="navigateToAddVisit({{ patient.id }})">
+                                <i class="bi bi-plus-circle-fill"></i>
+                              </button>
+                              <button type="button" class="table-btn" onclick="navigateToEditPatient({{ patient.id }})">
+                                <i class="bi bi-pencil-fill"></i>
+                              </button>
+                                <button type="button" class="table-btn" onclick="navigateToDeletePatient({{ patient.id }})">
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-upc"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-qr-code"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-printer-fill"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </td>
+                        </tr>
+                        {% endfor %}
+                        {% for visit in visit %}
+                        <tr>
+                          <td class="text-nowrap">
+                            <span>{{visit.current_date}}
+                            </span><br><span>{{visit.uhid}}/{{visit.visitid}}</span>
+                          </td>
+                          <td>
+                            <div>
+                              <div class="text-d-blue fw-semibold">{{visit.patient_name}}</div>
+                              <div>
+                                <span>{{visit.age}}</span>
+                                <svg class="gender-male">
+                                  <use xlink:href="static/images/iocn.svg#gender-male"></use>
+                              </svg>
+                              </div>
+                          </div>
+                          </td>
+                          <td>{{visit.email_id}}</td>
+                          <td>{{visit.contact_number}}</td>
+                          <td>{{visit.select_test}}</td>
+                          <td>{{visit.ref_dr}}</td>
+
+                          
+                          <td class="text-end">
+                            <div class="d-flex gap-3 justify-content-end">
+                             
+                              <button type="button" class="table-btn" onclick="navigateToEditvisit({{ visit.id }})">
+                                <i class="bi bi-pencil-fill"></i>
+                              </button>
+                                <button type="button" class="table-btn" onclick="navigateToDeletevisit({{ visit.id }})">
+                                  <i class="bi bi-trash"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-upc"></i>
+                                </button>
+                                <button type="button" class="table-btn" onclick="navigateTogenerateqrcode({{ visit.id }})">
+                                  <i class="bi bi-qr-code"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-printer-fill"></i>
+                                </button>
+                                <button type="button" class="table-btn">
+                                  <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button type="button" class="table-btn" onclick="navigateToGenerateReport({{ visit.id  }})">
+                                  <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </td>
+                        </tr>
+                        {% endfor %}
+                       
+                      </tbody>
+                    </table>
+              </div>
+          </div>
+    </div>
+    
+  </main>
+</body>
+
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function navigateToAddVisit(patientId) {
+        window.location.href = '/addvisit/' + patientId;
+    }
+
+    function navigateToEditPatient(patientId) {
+      window.location.href = '/editpatient/' + patientId;
+  }
+    function navigateToDeletePatient(patientId) {
+  window.location.href = '/deletepatient/' + patientId;
+}
+function navigateTogenerateqrcode(visitId) {
+  window.location.href = '/generate_qrcode_pdf/' + visitId;
+}
+function navigateTogeneratebarcode(visitId) {
+  window.location.href = '/generate_barcode_pdf/' + visitId;
+}
+function navigateToEditvisit(visitId) {
+  window.location.href = '/editvisit/' + visitId;
+}
+function navigateToDeletevisit(visitId) {
+  window.location.href = '/deletevisit/' + visitId;
+}
+function navigateToGenerateReport(visitId) {
+  // Assuming you have a route named 'generatereport' that accepts patientId
+  window.location.href = '/generatereport/' + visitId;
+}
+
+</script>

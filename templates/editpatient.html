@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Telepathology</title>
+    <!-- Core theme CSS-->
+   
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.css') }}">
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/custom.css') }}">
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/web-icons.css') }}">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid px-lg-4">
+            <div class="">
+                <nav class="navbar navbar-expand-lg bg-body-tertiary py-0 main-menu-nav">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="pe-lg-5">
+                            <img src="static/images/app-logo.svg" class="app-logo">
+                        </div>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                          
+                          <li class="nav-item">
+                            <a class="nav-link" href="/register">Register Patient</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/">Registration Summary</a>
+                          </li>
+                          <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Master
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/testmaster">Test Master</a></li>
+                                <li><a class="dropdown-item" href="/pathologistmaster">Pathologist Master</a></li>
+                                <li><a class="dropdown-item" href="/refdrmaster">Ref Dr Master</a></li>
+                                <li><a class="dropdown-item" href="/reportformat">Report Format</a></li>
+                            </ul>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="#">Logout</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div >
+                        <ul class="nav menu-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">
+                                    <i class="bi bi-person-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                  </nav>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <form method="POST"> 
+        <div class="mb-4">
+            <h5 class="page-heading">Patient Registration</h5>
+        </div>
+        <div class="auto-scroll">
+            <div class="bg-white rounded-2 p-3 mb-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">UHID</label>
+                            <input type="text" class="form-control" name="uhid" value="{{ patient.uhid }}"  disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-50">
+                                <label class="form-label">Title</label>
+                                <select name="title" value="{{ patient.title }}" class="form-select">
+                                    <option value="MR">MR</option>
+                                    <option value="SMT">SMT</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                    <option value="ANIMAL">ANIMAL</option>
+                                    <option value="BABY">BABY</option>
+                                    <option value="MS">MS</option>
+                                    <option value="MRS">MRS</option>
+                                    <option value="DR">DR</option>
+                                    <option value="MASTER">MASTER</option>
+                                </select>
+                            </div>
+                            <div class="w-50">
+                                <label class="form-label">Gender</label>
+                                <select name="gender" value="{{ patient.gender }}" class="form-select">
+                                    <option value="male" selected>Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" name="patient_name" value="{{ patient.patient_name }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group d-flex gap-3">
+                            <div class="w-75">
+                                <label class="form-label">DOB</label>
+                                <input type="date" name ="dob" value="{{ patient.dob }}" class="form-control">
+                            </div>
+                            <div class="w-25">
+                                <label class="form-label">Age</label>
+                                <input type="text" name="age" value="{{ patient.age }}" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Email ID</label>
+                            <input type="text"name="email_id" value="{{ patient.email_id }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" name="contact_number" value="{{ patient.contact_number }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select name="status" value="{{ patient.status }}" class="form-select">
+                                <option value="Active" selected>Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group d-flex gap-3 justify-content-center">
+                    <button type="submit" class="theme-btn">Submit</button>
+                    <button type="reset" class="theme-btn">Clear</button>
+                </div>
+                
+            </div>
+
+        </div>
+    </form>
+    </main>
+
+    
+</body>
+
+</html>

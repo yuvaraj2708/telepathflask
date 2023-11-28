@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Telepathology</title>
+    <!-- Core theme CSS-->
+   
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.css') }}">
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/custom.css') }}">
+    <link  rel="stylesheet" href="{{url_for('static', filename='css/web-icons.css') }}">
+    <script src="static/js/bootstrap.bundle.min.js"></script>
+
+
+</head>
+
+<body>
+    <header>
+        <div class="container-fluid px-lg-4">
+            <div class="">
+                <nav class="navbar navbar-expand-lg bg-body-tertiary py-0 main-menu-nav">
+                    <div class="container-fluid">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="pe-lg-5">
+                            <img src="static/images/app-logo.svg" class="app-logo">
+                        </div>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                          
+                          <li class="nav-item">
+                            <a class="nav-link" href="/register">Register Patient</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/">Registration Summary</a>
+                          </li>
+                          <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Master
+                            </a>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="/testmaster">Test Master</a></li>
+                              <li><a class="dropdown-item" href="/pathologistmaster">Pathologist Master</a></li>
+                              <li><a class="dropdown-item" href="/refdrmaster">Ref Dr Master</a></li>
+                              <li><a class="dropdown-item" href="/reportformat">Report Format</a></li>
+                            </ul>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="#">Logout</a>
+                          </li>
+                        </ul>
+                      </div>
+                      <div >
+                        <ul class="nav menu-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">
+                                    <i class="bi bi-person-fill"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                  </nav>
+            </div>
+        </div>
+    </header>
+    
+  <main>
+    <div class="mb-4 d-flex gap-3 align-items-center pe-3">
+        <h5 class="page-heading">Ref Dr Master</h5>
+        <div class="ms-auto">
+          <div class="d-flex gap-3">
+            <button type="submit" class="theme-btn-outline" >
+              <svg>
+                  <use xlink:href="static/images/iocn.svg#add"></use>
+              </svg>
+              <span><a class="nav-link" href="/addrefdr">Add Ref Dr</a></span>
+          </button>
+        </a>
+      </div>
+        </div>
+      </div>
+      <form method="POST" action="/refdrmaster">
+      
+    <div class="auto-scroll">
+          <div class="bg-white rounded-2 p-3 mb-4">
+              <div class="row">
+                
+                <div class="col-md-3">
+                  <label class="form-label">Doctor Name</label>
+                  <input type="text" class="form-control" name="DoctorName">
+                </div>
+               
+                <div class="col-md-3">
+                    <label class="form-label">Qualification</label>
+                    <input type="text" class="form-control" name="Qualification">
+                  </div>
+                
+
+                <div class="col-md-3">
+                  <button type="submit" class="theme-btn btn-h">
+                    <svg>
+                      <use xlink:href="static/images/iocn.svg#search"></use>
+                    </svg>
+                    <span>Search</span>
+                  </button>
+                </div>
+              </form>
+              </div>
+          </div>
+          <div class="bg-white rounded-2 p-3">
+              <div class="table-responsive">
+                  <table class="table table-data ">
+                      <thead>
+                        <tr>
+                          <th>Doctor Code</th>
+                          <th> Doctor Name</th>
+                          <th>Qualification</th>
+                          <th>Specialisation</th>
+                          <th>Address</th>
+                          <th>Mobile</th>
+                          
+                          
+                          <th class="text-end">Actions</th>
+                        
+                      <tbody>
+                        <tr>
+                          {% for refdr in refdrs %}
+                          <td class="text-nowrap">
+                            <span>{{refdr.DoctorCode}}</span><br><span>{{refdr.date}}</span>
+                          </td>
+                          <td>
+                            <div>
+                              <div class="text-d-blue fw-semibold">{{refdr.DoctorName }}</div>
+                              <div>
+                                
+                                <svg class="gender-male">
+                                  <use xlink:href="assets/images/iocn.svg#gender-male"></use>
+                              </svg>
+                              </div>
+                          </div>
+                          </td>
+                          <td>{{refdr.Qualification}}</td>
+                          <td>{{refdr.Specialisation}}</td>
+                          <td>{{refdr.Address}}</td>
+                          
+                            <td>{{refdr.Mobile}}</td>
+                               
+                          
+                            <td class="text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                
+                               
+                                  <button type="button" class="table-btn" onclick="navigateToEditrefdr({{ refdr.id }})" >
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title></title> <g id="Complete"> <g id="edit"> <g> <path d="M20,16v4a2,2,0,0,1-2,2H4a2,2,0,0,1-2-2V6A2,2,0,0,1,4,4H8" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path> <polygon fill="none" points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon> </g> </g> </g> </g></svg>
+                                  </button>
+                                </a>
+                                  
+                                  <button type="button" class="table-btn" onclick="navigateToDeleterefdr({{ refdr.id }})" >
+                                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                                  </button>
+                                </a>
+                            </div>
+                        </td>
+                        </tr>
+                      </thead>
+                          {% endfor %}
+                          
+                    </form>
+                        </tr>
+                      </tbody>  
+                    </table>
+              </div>
+          </div>
+    </div>
+
+  </main>
+</body>
+
+</html>
+
+
+
+<script>
+  
+  function navigateToEditrefdr(refdrId) {
+    window.location.href = '/editrefdr/' + refdrId;
+}
+
+function navigateToDeleterefdr(refdrId) {
+  window.location.href = '/deleterefdr/' + refdrId;
+}
+</script>
