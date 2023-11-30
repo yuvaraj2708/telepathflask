@@ -48,7 +48,7 @@
                                 <li><a class="dropdown-item" href="/refdrmaster">Ref Dr Master</a></li>
                                 <li><a class="dropdown-item" href="/reportformat">Report Format</a></li>
                                 <li><a class="dropdown-item" href="/addrouter">Router</a></li>
-                              </ul>
+                            </ul>
                           </li>
                           <li class="nav-item">
                             <a class="nav-link" href="#">Logout</a>
@@ -71,7 +71,7 @@
     </header>
     
   <main>
-    <form method="POST" >
+    <form method="POST" enctype="multipart/form-data">
     
     <div class="mb-4">
       <h5 class="page-heading">Add pathologist</h5>
@@ -82,14 +82,14 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Doctor Code </label>
-              <input type="text" name= "DoctorCode" value= "{{DoctorCode}}" class="form-control"readonly>
+              <input type="text" name= "DoctorCode" value= {{Patholast_code}} class="form-control"readonly>
             </div>
           </div>
          
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Doctor Name *</label>
-              <input type="text" class="form-control" name="DoctorName" required >
+              <input type="text" class="form-control" pattern="[a-zA-Z]+" name="DoctorName" required >
             </div>
           </div>
           
@@ -117,7 +117,13 @@
           <div class="col-md-3">
             <div class="form-group">
               <label class="form-label">Mobile *</label>
-              <input type="text" name="Mobile" id="contact_number" class="form-control" required>
+              <input type="tel" name="Mobile" id="contact_number" maxlenght="10" pattern="[0-9]{10}"class="form-control" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Signature *</label>
+              <input type="file" name="signature" id="signature" class="form-control" required>
             </div>
           </div>
           <div class="form-group d-flex gap-3 justify-content-center">

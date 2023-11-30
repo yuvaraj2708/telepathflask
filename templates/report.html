@@ -1,0 +1,24 @@
+<html>
+
+<head></head>
+
+<body>
+    <h3>Patient Name :{{visit.title}} {{visit.patient_name}}</h3>
+    <h3>Uhid : {{visit.uhid}}</h3>
+    <h3>Gender : {{visit.gender}}</h3>
+    <h3>DOB : {{visit.dob}}</h3>
+    <h3>Age : {{visit.age}}</h3>
+    <h3>Email Id : {{visit.email_id}}</h3>
+    <h3>Contact No : {{visit.contact_number}}</h3>
+    <h3>Address : {{visit.Address}}</h3>
+    <h3>Refdr : {{visit.ref_dr}}</h3>
+    <h3>Selected Test : {{visit.select_test}}</h3>
+    <h3>Visit Id : {{visit.visitid}}</h3>
+    <h3>Report :</h3>
+    <h3>{{template.template|safe}}</h3>
+    <h3>{{pathologists.signature}}</h3>
+    <img src="{{pathologists.signature}}" height="100" width="200" alt="image not loaded">
+
+</body>
+
+</html>

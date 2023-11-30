@@ -13,7 +13,46 @@
     <link  rel="stylesheet" href="{{url_for('static', filename='css/custom.css') }}">
     <link  rel="stylesheet" href="{{url_for('static', filename='css/web-icons.css') }}">
     <script src="static/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function dropdownChanged() {
+            // Get the selected value from the title dropdown
+            var selectedValue = document.getElementById("myDropdown").value;
+    
+            // Get the gender dropdown
+            var genderDropdown = document.getElementById('genderdropdown');
+    
+            // Check if the selected value is 'MR'
+            if (selectedValue == 'MR') {
+                // Change the value of the gender dropdown to 'male'
+                genderDropdown.selectedIndex = 0;
+            }
+            else if (selectedValue == 'MS' || selectedValue == 'MRS') {
+                // Change the value of the gender dropdown to 'male'
+                genderDropdown.selectedIndex = 1;
+            }
+            else if (selectedValue == 'OTHERS'){
+                genderDropdown.selectedIndex = 2;
+            }
+        }
 
+        function calculateAge() {
+            // Get the value of the date of birth input
+            var dob = document.getElementById("dob").value;
+
+            // Calculate the age based on the entered date of birth
+            var today = new Date();
+            var birthDate = new Date(dob);
+            var age = today.getFullYear() - birthDate.getFullYear();
+
+            // Check if the birthday has occurred this year
+            if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            // Set the calculated age in the age input field
+            document.getElementById("age").value = age;
+        }
+    </script>
 
 </head>
 
@@ -81,14 +120,16 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">UHID</label>
-                            <input type="text" class="form-control" name="uhid"  disabled>
+                            <input type="text" class="form-control" name="uhid" value={{uhid}} readonly>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group d-flex gap-3">
                             <div class="w-50">
                                 <label class="form-label">Title</label>
-                                <select name="title" class="form-select">
+                                <select name="title" class="form-select" 
+                                id="myDropdown"
+                                onchange="dropdownChanged()">
                                     <option value="MR">MR</option>
                                     <option value="SMT">SMT</option>
                                     <option value="OTHERS">OTHERS</option>
@@ -102,10 +143,11 @@
                             </div>
                             <div class="w-50">
                                 <label class="form-label">Gender</label>
-                                <select name="gender" class="form-select">
-                                    <option value="male" selected>Male</option>
+                                <select name="gender" class="form-select"
+                                Id="genderdropdown">
+                                    <option value="male">Male</option>
                                     <option value="female">Female</option>
-                                    <option value="other">other</option>
+                                    <option value="other">Others</option>
                                 </select>
                             </div>
                         </div>
@@ -113,37 +155,37 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Patient Name</label>
-                            <input type="text" name="patient_name"  class="form-control">
+                            <input type="text" name="patient_name"  class="form-control" pattern="[a-zA-Z]+" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group d-flex gap-3">
                             <div class="w-75">
                                 <label class="form-label">DOB</label>
-                                <input type="date" name ="dob" class="form-control">
+                                <input type="date" name ="dob" id="dob" class="form-control" onchange="calculateAge()" required>
                             </div>
                             <div class="w-25">
                                 <label class="form-label">Age</label>
-                                <input type="text" name="age" class="form-control" required>
+                                <input type="text" name="age" id="age" class="form-control" required readonly>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Email ID</label>
-                            <input type="text"name="email_id" class="form-control">
+                            <input type="email"name="email_id" class="form-control" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" class="form-control">
+                            <input type="tel" name="contact_number" maxlength="10" class="form-control" pattern="[0-9]{10}" required>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Address</label>
-                            <input type="text" name="Address" class="form-control">
+                            <input type="text" name="Address" class="form-control" required>
                         </div>
                         </div>
                     </div>

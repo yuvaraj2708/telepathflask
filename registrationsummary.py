@@ -13,6 +13,8 @@ from flask_ckeditor import CKEditor
 from datetime import datetime
 from barcode import Code128
 from barcode.writer import ImageWriter
+from xhtml2pdf import pisa
+import io
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///patients.db'
@@ -59,7 +61,7 @@ class pathologist(db.Model):
     Specialisation =db.Column(db.String(50))  
     Address =db.Column(db.String(50))
     Mobile =db.Column(db.String(50))  
-    signature = db.Column(db.LargeBinary)
+    signature = db.Column(db.String(50))
     current_date = datetime.now().date()
     
 class reportformat(db.Model):
@@ -88,10 +90,11 @@ class Visit(db.Model):
 class generatereport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pathologistid = db.Column(db.String(50))
-    patientid = db.Column(db.String(10))
+    patientname = db.Column(db.String(10))
     templateid = db.Column(db.String(10))  
     template =    db.Column(db.String(10))
-    current_date = datetime.now().date()  
+    current_date = datetime.now().date()
+    visitid=db.Column(db.String(10))  
 
 class router(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -99,8 +102,16 @@ class router(db.Model):
     ipaddress = db.Column(db.String(10))
     portnumber = db.Column(db.String(10))  
 
+    
 @app.route('/register', methods=['GET', 'POST'])
 def index():
+    lastuhid_code=''
+    patientmaster = Patient.query.order_by(Patient.id.desc()).first()
+    if patientmaster and patientmaster.uhid:
+        uhid_code = int(patientmaster.uhid[1:])
+        lastuhid_code = f'U{uhid_code + 1:05}'
+    else:
+        lastuhid_code = 'U00001'
     if request.method == 'POST':
         title = request.form.get('title')
         gender = request.form.get('gender')
@@ -111,12 +122,7 @@ def index():
         contact_number= request.form.get('contact_number')
         Address= request.form.get('Address')
         
-        patientmaster = Patient.query.order_by(Patient.id.desc()).first()
-        if patientmaster and patientmaster.uhid:
-            uhid_code = int(patientmaster.uhid[1:])
-            lastuhid_code = f'U{uhid_code + 1:05}'
-        else:
-            lastuhid_code = 'U00001'
+
         
         patient = Patient(
             uhid=lastuhid_code,
@@ -132,8 +138,7 @@ def index():
         uhid=lastuhid_code,
         db.session.add(patient)
         db.session.commit()
- 
-    return render_template('patientregister.html')
+    return render_template('patientregister.html',uhid=lastuhid_code)
 
 #editpatient
 @app.route('/editpatient/<int:patient_id>', methods=['GET', 'POST'])
@@ -195,7 +200,16 @@ def summary():
     # If the request is not a POST request, show all records
     patient = Patient.query.all()
     visit = Visit.query.all()
-    return render_template('registrationsummary.html', patient=patient, visit=visit)
+
+    # if g you want to retrieve all values in the 'template' column in generatereport
+    all_visitid = generatereport.query.with_entities(generatereport.visitid).all()
+
+    print(all_visitid)
+    
+    visitids=[i[0] for i in all_visitid]
+    print(visitids)
+
+    return render_template('registrationsummary.html', patient=patient, visit=visit,visitids=visitids)
 
 
 # testmaster
@@ -221,38 +235,24 @@ def testmaster():
     test = Testmaster.query.all()
     return render_template('tests-master.html', test=test)
     
+  
     
-#addrouter
-@app.route('/addrouter', methods=['GET', 'POST'])
-def addrouter():
-    if request.method == 'POST':
-        aetitle = request.form.get('aetitle')
-        ipaddress = request.form.get('ipaddress')
-        portnumber = request.form.get('portnumber')
-        routers = router(
-           aetitle=aetitle,
-           ipaddress=ipaddress,
-           portnumber = portnumber,
-        )
-        db.session.add(routers)
-        db.session.commit()
-    routers = router.query.all()   
-    return render_template('router.html',routers=routers)   
-        
 #addtest
 @app.route('/addtest', methods=['GET', 'POST'])
 def addtest():
+        # Generate a unique testcode (e.g., T00001, T00002, ...)
+    next_code=''
+    last_testmaster = Testmaster.query.order_by(Testmaster.id.desc()).first()
+    if last_testmaster:
+        last_code = int(last_testmaster.testcode[1:])
+        next_code = f'T{last_code + 1:05}'
+    else:
+        next_code = 'T00001'
     if request.method == 'POST':
         testname = request.form.get('testname')
         specimentype = request.form.get('specimentype')
 
-        # Generate a unique testcode (e.g., T00001, T00002, ...)
-        last_testmaster = Testmaster.query.order_by(Testmaster.id.desc()).first()
-        if last_testmaster:
-            last_code = int(last_testmaster.testcode[1:])
-            next_code = f'T{last_code + 1:05}'
-        else:
-            next_code = 'T00001'
+
         
         testmaster = Testmaster(
             testcode=next_code,
@@ -264,7 +264,7 @@ def addtest():
         db.session.add(testmaster)
         db.session.commit()
 
-    return render_template('addtest.html')
+    return render_template('addtest.html',code=next_code)
 
 #edittest
 @app.route('/edittest/<int:test_id>', methods=['GET', 'POST'])
@@ -321,6 +321,13 @@ def refdrmaster():
 #addrefdr
 @app.route('/addrefdr', methods=['GET', 'POST'])
 def addrefdr():
+    Doclast_code=''
+    last_refdrmaster = refdr.query.order_by(refdr.id.desc()).first()
+    if last_refdrmaster and last_refdrmaster.DoctorCode:
+        Doc_code = int(last_refdrmaster.DoctorCode[1:])
+        Doclast_code = f'D{Doc_code + 1:05}'
+    else:
+        Doclast_code = 'D00001'
     if request.method == 'POST':
         DoctorName = request.form.get('DoctorName')
         Qualification = request.form.get('Qualification')
@@ -328,12 +335,7 @@ def addrefdr():
         Address = request.form.get('Address')
         Mobile = request.form.get('Mobile')
         
-        last_refdrmaster = refdr.query.order_by(refdr.id.desc()).first()
-        if last_refdrmaster and last_refdrmaster.DoctorCode:
-            Doc_code = int(last_refdrmaster.DoctorCode[1:])
-            Doclast_code = f'D{Doc_code + 1:05}'
-        else:
-            Doclast_code = 'D00001'
+
             
         refdrmaster = refdr(
             DoctorCode=Doclast_code,
@@ -347,7 +349,7 @@ def addrefdr():
         db.session.add(refdrmaster)
         db.session.commit()
 
-    return render_template('addrefdr.html')
+    return render_template('addrefdr.html',Doclast_code=Doclast_code)
 
 #editrefdr
 @app.route('/editrefdr/<int:refdr_id>', methods=['GET', 'POST'])
@@ -401,23 +403,36 @@ def pathologistmaster():
     return render_template('pathologistmaster.html', pathologists=pathologists)
     
     
+    
+    pathologistmaster = pathologist.query.all()
+    return render_template('pathologistmaster.html',pathologistmaster=pathologistmaster)  
+    
 #addpathologist
 @app.route('/addpathologist', methods=['GET', 'POST'])
 def addpathologist():
+    Patholast_code=''
+    last_pathologistmaster = pathologist.query.order_by(pathologist.id.desc()).first()
+    if last_pathologistmaster and last_pathologistmaster.DoctorCode:
+        Patho_code = int(last_pathologistmaster.DoctorCode[1:])
+        Patholast_code = f'P{Patho_code + 1:05}'
+    else:
+        Patholast_code = 'P00001'
     if request.method == 'POST':
         DoctorName = request.form.get('DoctorName')
         Qualification = request.form.get('Qualification')
         Specialisation = request.form.get('Specialisation')
         Address = request.form.get('Address')
         Mobile = request.form.get('Mobile')
-        signature = request.form.get('signature')
         
-        last_pathologistmaster = pathologist.query.order_by(pathologist.id.desc()).first()
-        if last_pathologistmaster and last_pathologistmaster.DoctorCode:
-            Patho_code = int(last_pathologistmaster.DoctorCode[1:])
-            Patholast_code = f'P{Patho_code + 1:05}'
-        else:
-            Patholast_code = 'P00001'
+        # Assuming 'signature' is the name attribute of your file input
+        signature_file = request.files['signature']
+        file_name=signature_file.filename
+        print(file_name)
+        # Save the uploaded file to a folder (you can customize the folder)
+        path=f'static/signatures/{file_name}'
+        signature_file.save(path)
+        
+
         
         Pathologist = pathologist(
             DoctorCode=Patholast_code,
@@ -426,14 +441,14 @@ def addpathologist():
             Specialisation=Specialisation,
             Address=Address,
             Mobile=Mobile,
-            signature=signature
+            signature='/'+path
             
              
         )
         db.session.add(Pathologist)
         db.session.commit()
 
-    return render_template('addpathologist.html')
+    return render_template('addpathologist.html',Patholast_code=Patholast_code)
 
 #editpathologist
 @app.route('/editpathologist/<int:pathologist_id>', methods=['GET', 'POST'])
@@ -518,27 +533,50 @@ def generatereports(visit_id):
     pathologists = pathologist.query.all()
     patients = Patient.query.all()  # Change the variable name to 'patients'
     templates = reportformat.query.all()  # Change the variable name to 'templates'
+    
 
     if request.method == 'POST':
-        pathologistid = request.form.get('pathologistid')
-        patientid = request.form.get('patientid')
-        templateid = request.form.get('templateid')
-        template = request.form.get('template')
-        
-        generatereports = generatereport(
-            pathologistid=pathologistid,
-            patientid=patientid,
-            templateid=templateid,
-            template=template
-        )
-        db.session.add(generatereports)
-        db.session.commit()
+        if request.form.get('hidd')=='valuechanged':
+            pathologistid = request.form.get('pathologistid')
+            templateid=request.form.get('templateid')
+            temp = reportformat.query.get_or_404(templateid)
+
+            return render_template('generatereport.html',
+                           pathologists=pathologists,
+                           visit=visit,  # Change the variable name to 'visit'
+                           patients=patients,  # Change the variable name to 'patients'
+                           templates=templates,  # Change the variable name to 'templates'
+                           temp=temp,
+                           templateid=int(templateid),
+                           pathologistid=pathologistid
+    
+                           )
+        else:
+            
+            pathologistid = request.form.get('pathologistid')
+            patientname = request.form.get('patientname')
+            templateid = request.form.get('templateid')
+            template = request.form.get('template')
+            visitid=request.form.get('visitid')
+            
+            
+            generatereports = generatereport(
+             
+                pathologistid=pathologistid,
+                patientname=patientname,
+                templateid=templateid,
+                template=template,
+                visitid=visitid
+            )
+            db.session.add(generatereports)
+            db.session.commit()
 
     return render_template('generatereport.html',
                            pathologists=pathologists,
                            visit=visit,  # Change the variable name to 'visit'
                            patients=patients,  # Change the variable name to 'patients'
-                           templates=templates  # Change the variable name to 'templates'
+                           templates=templates,  # Change the variable name to 'templates'
+                           temp=None
                            )
 
 
@@ -613,10 +651,13 @@ def edit_visit(visit_id):
     return render_template('editvisit.html', visit=visit)
 
 #deletevisit
-@app.route('/deletevisit/<int:visit_id>', methods=['GET', 'POST'])
+@app.route('/deletevisit/<visit_id>', methods=['GET', 'POST'])
 def delete_visit(visit_id):
-    visit = Visit.query.get_or_404(visit_id)
+    visit =  Visit.query.filter_by(visitid=visit_id).first_or_404()
+    report=generatereport.query.filter_by(visitid=visit_id).first()
     db.session.delete(visit)
+    if report!=None:
+        db.session.delete(report)
     db.session.commit()
     return redirect('/')
     
@@ -688,6 +729,57 @@ def generate_barcode_pdf(visit_id):
     response.headers['Content-Disposition'] = f'inline; filename=barcode_{visit.id}.pdf'
 
     return response
+
+@app.route('/printreport/<visit_id>')
+def generate_print_report(visit_id):
+    visit = Visit.query.filter_by(visitid=visit_id).first_or_404()
+    template = generatereport.query.filter_by(visitid=visit_id).first_or_404()
+    pathologistid = template.pathologistid
+    pathologists = pathologist.query.filter_by(DoctorCode=pathologistid).first_or_404()
+    html = render_template('report.html', visit=visit, template=template, pathologists=pathologists)
+
+    pdf_buffer = io.BytesIO()
+    base_url = request.url_root  # or set it manually
+    pisa.CreatePDF(io.StringIO(html), pdf_buffer, path=base_url)
+    pdf_buffer.seek(0)
+
+    return send_file(pdf_buffer, download_name='output.pdf', as_attachment=True)
+   # p=pisa.CreatePDF(html)
+    # pdf=p.dest.getvalue()
+
+    # response = make_response(pdf)
+    # response.headers['Content-Type'] = 'application/pdf'
+    # response.headers['Content-Disposition'] = f'inline; filename=output_{visit.id}.pdf'
+
+    # return response
+
+
+#addrouter
+@app.route('/addrouter', methods=['GET', 'POST'])
+def addrouter():
+    if request.method == 'POST':
+        aetitle = request.form.get('aetitle')
+        ipaddress = request.form.get('ipaddress')
+        portnumber = request.form.get('portnumber')
+        routers = router(
+           aetitle=aetitle,
+           ipaddress=ipaddress,
+           portnumber = portnumber,
+        )
+        db.session.add(routers)
+        db.session.commit()
+    routers = router.query.all()   
+    return render_template('router.html',routers=routers)   
+
+
+@app.route('/previewreport/<visit_id>')
+def generate_preview_report(visit_id):
+    visit =  Visit.query.filter_by(visitid=visit_id).first_or_404()
+    template = generatereport.query.filter_by(visitid=visit_id).first_or_404() 
+    pathologistid=template.pathologistid
+    pathologists=pathologist.query.filter_by(DoctorCode=pathologistid).first_or_404()
+    return render_template('report.html',visit=visit,template=template,pathologists=pathologists)
+
 
   
        

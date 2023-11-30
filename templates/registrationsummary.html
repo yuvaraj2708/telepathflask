@@ -46,7 +46,7 @@
                               <li><a class="dropdown-item" href="/refdrmaster">Ref Dr Master</a></li>
                               <li><a class="dropdown-item" href="/reportformat">Report Format</a></li>
                               <li><a class="dropdown-item" href="/addrouter">Router</a></li>
-                            </ul>
+                        </ul>
                       </li>
                       <li class="nav-item">
                         <a class="nav-link" href="#">Logout</a>
@@ -205,20 +205,28 @@
                               <button type="button" class="table-btn" onclick="navigateToEditvisit({{ visit.id }})">
                                 <i class="bi bi-pencil-fill"></i>
                               </button>
-                                <button type="button" class="table-btn" onclick="navigateToDeletevisit({{ visit.id }})">
+                                <button type="button" class="table-btn" onclick="navigateToDeletevisit('{{ visit.visitid }}')">
                                   <i class="bi bi-trash"></i>
                                 </button>
-                                <button type="button" class="table-btn">
+                                <button type="button" class="table-btn"  onclick="navigateTogeneratebarcode({{ visit.id }})">
                                   <i class="bi bi-upc"></i>
                                 </button>
                                 <button type="button" class="table-btn" onclick="navigateTogenerateqrcode({{ visit.id }})">
                                   <i class="bi bi-qr-code"></i>
                                 </button>
-                                <button type="button" class="table-btn">
-                                  <i class="bi bi-printer-fill"></i>
-                                </button>
-                                <button type="button" class="table-btn">
-                                  <i class="bi bi-eye-fill"></i>
+                                
+                                    {% if visit.visitid in visitids %}
+                                          <button type="button" class="table-btn" onclick="navigateToPrintReport( '{{ visit.visitid  }}' )">
+                                            <i class="bi bi-printer-fill"></i>
+                                          </button>
+                                    {% else %}
+                                            <button type="button" class="table-btn" onclick="navigateToPrintReport( '{{ visit.visitid  }}' )" disabled>
+                                              <i class="bi bi-printer-fill"></i>
+                                            </button>
+                                    {% endif %}
+                                
+                                <button type="button" class="table-btn" onclick="navigateToPreviewReport( '{{ visit.visitid  }}' )">
+                                  <i class="bi bi-eye-fill" ></i>
                                 </button>
                                 <button type="button" class="table-btn" onclick="navigateToGenerateReport({{ visit.id  }})">
                                   <i class="bi bi-arrow-clockwise"></i>
@@ -265,6 +273,14 @@ function navigateToDeletevisit(visitId) {
 function navigateToGenerateReport(visitId) {
   // Assuming you have a route named 'generatereport' that accepts patientId
   window.location.href = '/generatereport/' + visitId;
+}
+function navigateToPrintReport(visitId) {
+  // Assuming you have a route named 'generatereport' that accepts patientId
+
+  window.location.href = '/printreport/' + visitId;
+}
+function navigateToPreviewReport(visitId){
+  window.location.href = '/previewreport/' + visitId;
 }
 
 </script>

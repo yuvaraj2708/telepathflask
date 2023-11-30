@@ -14,6 +14,26 @@
     <link  rel="stylesheet" href="{{url_for('static', filename='css/web-icons.css') }}">
     <script src="static/js/bootstrap.bundle.min.js"></script>
     {{ ckeditor.load() }}
+
+    <script>
+        function submitForm() {
+            // Get the form element
+            document.getElementById('hid').value = 'valuechanged'
+            var form = document.getElementById('reportForm');
+           
+            
+            // Submit the form
+            form.submit();
+        }
+        function submitform2(){
+            document.getElementById('hid').value = 'value'
+            var form = document.getElementById('reportForm');
+           
+            
+            // Submit the form
+            form.submit();
+        }
+    </script>
    
     
 </head>
@@ -73,7 +93,7 @@
 <main>
     
 
-    <form method="POST">
+    <form method="POST" id="reportForm">
         
         <div class="mb-4">
             <h5 class="page-heading">Add Report</h5>
@@ -84,7 +104,8 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">PatientName</label>
-                            <input type="text" name="patientid" value= "{{visit.patient_name}}" class="form-control" disabled>
+                            <input type="text" name="patientname" value= "{{visit.patient_name}}" class="form-control" readonly>
+                            <input type="hidden" name="visitid" value="{{visit.visitid}}">
                         </div>
                     </div>
                     
@@ -92,36 +113,58 @@
                     <div class="col-md-4">
                         <label class="form-label">Pathologist</label>
                         <select class="form-select" name="pathologistid">
-                         <option value="" selected>Please select Ref Dr</option>
-                         {% for pathologistid in pathologistid %}
-                           <option>{{ refdr.DoctorName }}</option>
-                           {% endfor %}
+                         <option value="example">Please select Ref Dr</option>
+                         {% for pathologist in pathologists %}
+                            {% if pathologist.DoctorCode == pathologistid %}
+                                <option value="{{pathologist.DoctorCode}}" selected>{{ pathologist.DoctorName }}</option>
+                            {% else %}
+                                <option value="{{pathologist.DoctorCode}}">{{ pathologist.DoctorName }}</option>
+                            {% endif %}
+                          {% endfor %}
                          </select>
                          </div>
 
                          <div class="col-md-4">
                             <label class="form-label">Template</label>
-                            <select class="form-select" name="templateid">
-                                <option value="" selected>Please select Template</option>
+                            <select class="form-select" name="templateid" onchange="submitForm()">
+                                <option value="">Please select Template</option>
                                 {% for template in templates %}
-                                <option value="{{ template.id }}">{{ template.reportname }}</option>
+                                    {% if template.id == templateid %}
+                                        <option value="{{ template.id }}" selected>{{ template.reportname }}</option>
+                                    {% else %}
+                                        <option value="{{ template.id }}">{{ template.reportname }}</option>
+                                    {% endif %}
+
                                 {% endfor %} 
                             </select>
                         </div>
     
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <label class="form-label">Report Content</label>
                             {% for template in templates %}
                             {{ ckeditor.create(value=template.template) }}
                          {% endfor %}
+                        </div> -->
+
+                        <div class="col-md-12">
+                            <label class="form-label">Report Content</label>
+                            {% if temp == None %}
+                                {{ckeditor.create(name='template')}}
+                            {% else %}
+                            {{ ckeditor.create(value=temp.template,name='template') }}
+                            {% endif %}
                         </div>
     
                     <div class="col-md-12 mt-3">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" onclick="submitform2()">Submit</button>
+                        <input type="hidden" value="" id="hid" name="hidd">
                     </div>
                 </div>
                 </div>
             </div>
+
         </div>
     </form>
+ 
+
                         
